@@ -23,8 +23,7 @@ important concepts.
 
 ## Credits
 
-Professor Kang Zhao
-Group members: 
+Professor Kang Zhao and members of group project: 
 - Chang Yeon Kim, 
 - Yihan Wang, 
 - Ke Wang, 
