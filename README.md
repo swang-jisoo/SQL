@@ -12,14 +12,14 @@ Main topics include:
 
 ## Motivation
 
-I summarized the summarized contents of DM course to keep reviewing 
-important concepts.
+I summarized the  contents of DM course to keep reviewing important 
+concepts.
 
 ## Features
 
 - summary of Database Management course
 - individual assignments and APEX group project
-- preparation for AITP competition (updataed in April 2017)
+- preparation for AITP competition (DB contests, updataed in April 2017)
 
 ## Credits
 
