@@ -96,6 +96,7 @@ SELECT CustomerID, CustomerName
 FROM Customer_T
 WHERE CustomerID NOT IN (SELECT DISTINCT(CustomerID)
                          FROM Order_T);
+                         
 -- Q8 List the names and number of employees supervised for all the supervisors 
 -- who supervise more than two employees. No need to re-label any column.
 
