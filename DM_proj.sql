@@ -1,50 +1,97 @@
---Data Set Tables
+-- Database Management Group Project
+-- Jisoo Lee, Chang Yeon Kim, Ke Wang, Yihan Whang, Samuel Zernhelt, 
+-- Xiaojun You
+
+/* 
+In this project, our group will study the presence of global warming 
+based on dataset, and furthermore, the effect of human activities on 
+the climate change.
+
+About Data:
+- Climate change
+    1) Land and Sea Temperature: annual average land and ocean surface 
+    temperature in Celcius
+    2) Average Sea Level: cumulative changes in sea level in inches
+    3) Precipitation: total annual amount changes of precipitation 
+    in inches
+    4) Leaf and Bloom Date: changes in lilac and honeysuckle first 
+    leaf dates and first bloom dates 
+- Human Activity
+    1) GDP: annual percentage growth rate of GDP at market prices 
+    based on constant local currency
+    2) Population: annual population growth rate 
+    3) CO2: carbon dioxide produced during consumption of solid, liquid, 
+    and gas fuels and gas flaring (metric tons per capita), records for 
+    each of including land-use change and forestry and excluding land-use 
+    change and forestry
+    4) GHG: other greenhouse gas emissions are by-product emissions of 
+    hydrofluorocarbons (HFC), perfluorocarbons (PFC), and sulfur 
+    hexafluoride (SF6) (thousand metric tons of CO2 equivalent), records 
+    for each of including land-use change and forestry and excluding 
+    land-use change and forestry 
+    
+Collected from:
+http://databank.worldbank.org/data/reports.aspx?source=world-development-indicators#advancedDownloadOptions
+http://data.worldbank.org/data-catalog/cckp_historical_data
+http://data.worldbank.org/indicator
+https://stats.oecd.org/Index.aspx?DataSetCode=AIR_GHG#
+http://www.wri.org/resources/data-sets/cait-historical-emissions-data-countries-us-states-unfccc
+http://climate.nasa.gov/vital-signs/carbon-dioxide/
+http://www.ncdc.noaa.gov/indicators/
+https://www3.epa.gov/climatechange/science/indicators/index.html
+*/
+
+-- Data Set Tables (JISOO LEE)
 DROP TABLE Country_T CASCADE CONSTRAINTS;
 DROP TABLE ClimateChange_T CASCADE CONSTRAINTS;
 DROP TABLE EconDevelopment_T CASCADE CONSTRAINTS;
 
-CREATE TABLE Country_T 
-        	(CountryID  	VARCHAR2(3)    	NOT NULL, 
-         	CountryName	VARCHAR2(30), 
-         	Continent  	VARCHAR2(30), 
-         	NSGlobal   	VARCHAR2(25),     	
+-- Total 214 countries
+CREATE TABLE Country_T  
+	(CountryID  	VARCHAR2(3)    	NOT NULL, 
+        CountryName	VARCHAR2(30), 
+        Continent  	VARCHAR2(30), 
+        NSGlobal   	VARCHAR2(25),     	
 CONSTRAINT CountryID_PK PRIMARY KEY (CountryID));
 
 CREATE TABLE ClimateChange_T 
-         	(CountryID   	VARCHAR2(3)  	NOT NULL, 
-          	AutoID      	NUMBER(7)    	NOT NULL, 
+        (CountryID   	VARCHAR2(3)  	NOT NULL, 
+        AutoID      	NUMBER(7)    	NOT NULL, 
        	DateAdded   	NUMBER, 
        	LandTemp    	NUMBER, 
-          	SeaTemp     	NUMBER,        	
-          	SeaLevel    	NUMBER,           	
-          	Precipitation   NUMBER, 
-          	Glacier     	NUMBER, 
-          	FirstLeafDate   NUMBER, 
-          	FirstBloomDate  NUMBER, 
+        SeaTemp     	NUMBER,        	
+        SeaLevel    	NUMBER,           	
+        Precipitation   NUMBER, 
+        Glacier     	NUMBER, 
+        FirstLeafDate   NUMBER, 
+        FirstBloomDate  NUMBER, 
 CONSTRAINT ClimateChange_T_PK PRIMARY KEY (CountryID, AutoID),	
 CONSTRAINT ClimateChange_T_FK FOREIGN KEY (CountryID) REFERENCES Country_T (CountryID));
 
 CREATE TABLE EconDevelopment_T 
-         	(CountryID   	VARCHAR2(3)  	NOT NULL, 
-          	AutoID      	NUMBER(7)    	NOT NULL, 
+        (CountryID   	VARCHAR2(3)  	NOT NULL, 
+        AutoID      	NUMBER(7)    	NOT NULL, 
        	DateAdded   	NUMBER, 
        	GDPUSD      	NUMBER,            	
-          	Population  	NUMBER,  
-          	CO2exclLUCF 	NUMBER,
-          	CO2inclLUCF 	NUMBER,
-          	GHGexclLUCF 	NUMBER,       	
-          	GHGinclLUCF 	NUMBER,       	
+        Population  	NUMBER,  
+        CO2exclLUCF 	NUMBER,
+        CO2inclLUCF 	NUMBER,
+        GHGexclLUCF 	NUMBER,       	
+        GHGinclLUCF 	NUMBER,       	
 CONSTRAINT EconDevelopment_T_PK PRIMARY KEY (CountryID, AutoID), 
 CONSTRAINT EconDevelopment_T_FK FOREIGN KEY (CountryID) REFERENCES Country_T (CountryID));
 
---Climate Change
---Global Land and Sea Temperature
+-- Climate Change (JISOO LEE)
+-- 1) Global Land and Sea Temperature
 Select CountryName As Global, DateAdded As Year, LandTemp, SeaTemp  
 From Country_T CT inner join ClimateChange_T CCT on CT.CountryID = CCT.CountryID 
 Where CT.CountryID = 'GLB'  ;
 
---Global Land Temperature Map Series
---Creating the world map had some errors; so instead of using the query directly, the output of the query is transfered into XML codes via excel VBA and customized XML codes to make the world map series for global land temperature.
+-- 2) Global Land Temperature Map Series
+-- Creating the world map had some errors; so instead of using the query 
+-- directly, the output of the query is transfered into XML codes via excel 
+-- VBA and customized XML codes to make the world map series for global 
+-- land temperature.
 
 Select DateAdded, CountryName, LandTemp
 From Country_T CT inner join ClimateChange_T CCT on CT.CountryID = CCT.CountryID 
@@ -55,17 +102,19 @@ Where CountryName = 'Global')
 And DateAdded = 1900 
 Order by CountryName; 
 
---excel VBA code
---Column A: DateAdded; Column B: CountryName; Column C: LandTemp; Column E: XML codes
+-- Excel VBA code
+-- Column A: DateAdded; Column B: CountryName; Column C: LandTemp; Column E: XML codes
 Sub mapQuery()
 nRows = Range(Range("A2"), Range("A2").End(xlDown)).Rows.Count
 
 For i = 1 To nRows
-Range("E1").Offset(i, 0).Value = "<point name= " & Chr(34) & Range("B1").Offset(i, 0).Value & Chr(34) & " y= " & Chr(34) & Range("C1").Offset(i, 0).Value & Chr(34) & " />"
+Range("E1").Offset(i, 0).Value = "<point name= " & Chr(34) 
+& Range("B1").Offset(i, 0).Value & Chr(34) & " y= " & Chr(34) 
+& Range("C1").Offset(i, 0).Value & Chr(34) & " />"
 Next i
 End Sub
 
---XML code
+-- XML code
 <?xml version = "1.0" encoding="utf-8" standalone = "yes"?>
 <anychart>
 <settings>
@@ -367,51 +416,52 @@ LandTemp: undefined]]>
 </chart>
 </charts>
 </anychart>
---Global Leaf Bloom Date
+
+-- 3) Global Leaf Bloom Date
 Select CountryName As Global, DateAdded As Year, FirstLeafDate, FirstBloomDate  
 From Country_T CT inner join ClimateChange_T CCT on CT.CountryID = CCT.CountryID
 Where CT.CountryID = 'GLB';
 
---GLB Sea Level
+-- 4) GLB Sea Level
 Select CountryName As Global, DateAdded As Year, SeaLevel 
 From Country_T CT inner join ClimateChange_T CCT on CT.CountryID = CCT.CountryID	
 Where CT.CountryID = 'GLB'; 
 
---GLB Precipitation
+-- 5) GLB Precipitation
 Select CountryName As Global, DateAdded As Year, Precipitation 
 From Country_T CT inner join ClimateChange_T CCT on CT.CountryID = CCT.CountryID
 Where CT.CountryID = 'GLB';
 
---GLB Glacier
+-- 6) GLB Glacier
 Select CountryName As Global, DateAdded As Year, Glacier 
 From Country_T CT inner join ClimateChange_T CCT on CT.CountryID = CCT.CountryID
 Where CT.CountryID = 'GLB'
 and DateAdded >= 1945
 order by DateAdded ASC;
 
---Econ Development 
---GDP
+-- Econ Development (JISOO LEE & KE WANG)
+-- 1) GDP
 select null link, DATEADDED label1, AVG(GDPUSD) As AVERAGEGDP 
 from  "MS3200HW"."ECONDEVELOPMENT_T"
 where DATEADDED >= 1960
 group by DATEADDED
 order by DATEADDED ASC;  
 
---Population
+-- 2) Population
 select null link, DATEADDED label1, AVG(Population) As Population
 from  "MS3200HW"."ECONDEVELOPMENT_T"
 where DATEADDED >= 1960
 group by DATEADDED
 order by DATEADDED ASC;
 
---CO2
+-- 3) CO2
 select null link, DATEADDED label1, AVG(CO2INCLLUCF) As C02inclLUCF, AVG(CO2EXCLLUCF) As CO2exclLUCF 
 from  "MS3200HW"."ECONDEVELOPMENT_T"
 where DATEADDED >= 1960
 group by DATEADDED
 order by DATEADDED ASC;
 
---GHG
+-- 4) GHG
 select null link, DATEADDED label1, AVG(GHGINCLLUCF) As GHGINCLLUCF, AVG(GHGEXCLLUCF) As GHGEXCLLUCF
 from  "MS3200HW"."ECONDEVELOPMENT_T"
 where DATEADDED >= 1960
